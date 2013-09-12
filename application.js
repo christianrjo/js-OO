@@ -1,29 +1,41 @@
-function Die(){
-  this.side = 6
-};
+function Die() {
+  this.side = 6;
+  this.$view = $(this.template);
+}
 
 Die.prototype.roll = function() {
-  return Math.floor((Math.random()*this.side)+1);
+  var value = Math.floor((Math.random()*this.side)+1);
+  this.$view.text(value);
 };
 
-// function Bag () {
-//   this.dice = []
-// }
+Die.prototype.template = '<div class="die">0</div>';
 
+function DiceHolder() {
+  this.dice = [];
+  this.$view = $('.dice');
+}
+
+DiceHolder.prototype.addDie = function() {
+  var die = new Die();
+  this.dice.push(die);
+  this.$view.append(die.$view);
+};
+
+DiceHolder.prototype.rollAll = function() {
+  this.dice.forEach(function(die) {
+    die.roll();
+  });
+};
 
 $(document).ready(function() {
- var diceHolder = new Bag;
- var die = new Die;
- var newDie = '<div class="die">0</div>';
+  var diceHolder = new DiceHolder();
+  var die = new Die();
 
- $('#roller button.add').on('click', function() {
-    $('.dice').append(newDie);
+  $('#roller button.add').on('click', function() {
+    diceHolder.addDie();
   });
 
   $('#roller button.roll').on('click', function() {
-    $('.die').each(function(index ,value) {
-      $(value).text(die.roll());
-    });
+    diceHolder.rollAll();
   });
 });
-
